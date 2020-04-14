@@ -241,7 +241,7 @@ class GoogleAuth(ApiAttributeMixin, object):
       raise AuthenticationError('No code found in redirect')
 
   @CheckAuth
-  def CommandLineAuth(self, host_name='localhost', port_numbers=8080):
+  def CommandLineAuth(self, host_name='localhost', port_number=8080):
     """Authenticate and authorize from user by printing authentication url
     retrieving authentication code from command-line.
 
