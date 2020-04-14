@@ -241,13 +241,13 @@ class GoogleAuth(ApiAttributeMixin, object):
       raise AuthenticationError('No code found in redirect')
 
   @CheckAuth
-  def CommandLineAuth(self):
+  def CommandLineAuth(self, redirect_uri: str):
     """Authenticate and authorize from user by printing authentication url
     retrieving authentication code from command-line.
 
     :returns: str -- code returned from commandline.
     """
-    self.flow.redirect_uri = OOB_CALLBACK_URN
+    self.flow.redirect_uri = redirect_uri
     authorize_url = self.GetAuthUrl()
     print('Go to the following link in your browser:')
     print()
