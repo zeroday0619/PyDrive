@@ -241,12 +241,33 @@ class GoogleAuth(ApiAttributeMixin, object):
       raise AuthenticationError('No code found in redirect')
 
   @CheckAuth
-  def CommandLineAuth(self, redirect_uri: str):
+  def CommandLineAuth(self, host_name='localhost', port_numbers=None):
     """Authenticate and authorize from user by printing authentication url
     retrieving authentication code from command-line.
 
     :returns: str -- code returned from commandline.
     """
+    if port_numbers is None:
+      port_numbers = [8080, 8090]  # Mutable objects should not be default
+      # values, as each call's changes are global.
+    success = False
+    port_number = 0
+    for port in port_numbers:
+      port_number = port
+      try:
+        httpd = ClientRedirectServer((host_name, port), ClientRedirectHandler)
+      except socket.error as e:
+        pass
+      else:
+        success = True
+        break
+    if success:
+      oauth_callback = 'http://%s:%s/' % (host_name, port_number)
+    else:
+      print('Failed to start a local web server. Please check your firewall')
+      print('settings and locally running programs that may be blocking or')
+      print('using configured ports. Default ports are 8080 and 8090.')
+      raise AuthenticationError()
     self.flow.redirect_uri = redirect_uri
     authorize_url = self.GetAuthUrl()
     print('Go to the following link in your browser:')
